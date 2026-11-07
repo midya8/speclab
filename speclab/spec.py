@@ -20,32 +20,48 @@ from .model import CharNGram
 
 
 class EvalCounter:
-    """Wraps a model and counts scoring passes."""
+    """Wraps a model and counts verification rounds and actual scoring calls.
+
+    `rounds` models the batched verification passes a real deployment runs:
+    one per drafted block, one per baseline token. `scoring_calls` counts the
+    actual sequential scoring work this pure-Python implementation performs
+    inside those rounds. Reporting both keeps the modeled count honest: the
+    savings number is a verification-round count, not a measured reduction in
+    arithmetic.
+    """
 
     def __init__(self, model: CharNGram):
         self.model = model
-        self.evaluations = 0
+        self.rounds = 0
+        self.scoring_calls = 0
+
+    @property
+    def evaluations(self) -> int:
+        return self.rounds
 
     def greedy_next(self, context: str) -> str:
-        self.evaluations += 1
+        self.rounds += 1
+        self.scoring_calls += 1
         return self.model.greedy_next(context)
 
     def verify_block(self, context: str, block: List[str]) -> Tuple[int, str]:
-        """One batched pass over the drafted block.
+        """Score the drafted block as one modeled verification round.
 
         Returns (accepted_count, next_token): how many drafted tokens the
         target greedily confirms in order, plus the target's greedy token at
         the first mismatch (or after a fully accepted block).
         """
-        self.evaluations += 1  # the whole block scores in one pass
+        self.rounds += 1  # one modeled batched pass per block
         accepted = 0
         ctx = context
         for tok in block:
+            self.scoring_calls += 1
             choice = self.model.greedy_next(ctx)
             if choice != tok:
                 return accepted, choice
             accepted += 1
             ctx = ctx + tok
+        self.scoring_calls += 1
         return accepted, self.model.greedy_next(ctx)
 
 
@@ -61,7 +77,8 @@ def target_only(target: CharNGram, prompt: str, n_tokens: int,
             break
         text += ch
         emitted += 1
-    return {"text": text, "emitted": emitted, "target_evals": counter.evaluations}
+    return {"text": text, "emitted": emitted, "target_evals": counter.rounds,
+            "target_scoring_calls": counter.scoring_calls}
 
 
 def speculative_run(draft: CharNGram, target: CharNGram, prompt: str,
@@ -104,7 +121,8 @@ def speculative_run(draft: CharNGram, target: CharNGram, prompt: str,
     return {
         "text": text,
         "emitted": emitted,
-        "target_evals": t_counter.evaluations,
+        "target_evals": t_counter.rounds,
+        "target_scoring_calls": t_counter.scoring_calls,
         "draft_evals": d_evals,
         "drafted": drafted,
         "accepted": accepted_sum,
