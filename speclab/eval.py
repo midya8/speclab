@@ -50,6 +50,8 @@ def run_evaluation(draft: CharNGram, target: CharNGram,
             "acceptance": spec["acceptance"],
             "baseline_target_evals": base["target_evals"],
             "spec_target_evals": spec["target_evals"],
+            "spec_scoring_calls": spec["target_scoring_calls"],
+            "baseline_scoring_calls": base["target_scoring_calls"],
             "draft_evals": spec["draft_evals"],
         })
     n = len(per_prompt)
@@ -63,6 +65,8 @@ def run_evaluation(draft: CharNGram, target: CharNGram,
         "spec_target_evals": spec_evals,
         "target_eval_savings": 1.0 - (spec_evals / base_evals if base_evals else 1.0),
         "total_draft_evals": sum(r["draft_evals"] for r in per_prompt),
+        "spec_scoring_calls": sum(r["spec_scoring_calls"] for r in per_prompt),
+        "baseline_scoring_calls": sum(r["baseline_scoring_calls"] for r in per_prompt),
         "n_tokens": n_tokens,
         "gamma": gamma,
     }
@@ -88,5 +92,9 @@ def format_terminal(results: Dict) -> str:
         f"{results['baseline_target_evals']} naive "
         f"(savings {results['target_eval_savings']*100:.1f}%)",
         f"Draft evaluations (cheap model): {results['total_draft_evals']}",
+        "",
+        "Note: target evals are modeled verification rounds (one per drafted block);",
+        f"actual sequential scoring work: {results['spec_scoring_calls']} calls vs "
+        f"{results['baseline_scoring_calls']} naive.",
     ]
     return "\n".join(lines)
