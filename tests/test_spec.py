@@ -40,11 +40,22 @@ class TestCounting(unittest.TestCase):
         r = target_only(target, "the model", 30)
         self.assertEqual(r["target_evals"], r["emitted"])
 
-    def test_verify_block_is_one_evaluation(self):
+    def test_verify_block_is_one_modeled_round(self):
+        # One modeled verification round per block; the actual sequential
+        # scoring calls inside it are counted separately and honestly.
         _, target = build_pair(200)
         c = EvalCounter(target)
-        c.verify_block("the model", ["s", "c", "o", "r"])
-        self.assertEqual(c.evaluations, 1)
+        # Draft what the target would greedily say so the block is accepted.
+        ctx = "the model"
+        block = []
+        for _ in range(4):
+            nxt = target.greedy_next(ctx)
+            block.append(nxt)
+            ctx += nxt
+        accepted, _ = c.verify_block("the model", block)
+        self.assertEqual(c.rounds, 1)
+        self.assertEqual(accepted, 4)
+        self.assertEqual(c.scoring_calls, 5)  # 4 confirmations + bonus token
 
     def test_speculative_saves_target_evals(self):
         draft, target = build_pair(200)
@@ -69,6 +80,10 @@ class TestFixtureEvaluation(unittest.TestCase):
         self.assertEqual(r["baseline_target_evals"], 480)
         self.assertAlmostEqual(r["mean_acceptance"], 0.800, places=3)
         self.assertAlmostEqual(r["target_eval_savings"], 0.7458, places=4)
+        # Actual sequential scoring work in this implementation exceeds naive;
+        # the round count is a modeled batched-pass count, not arithmetic saved.
+        self.assertEqual(r["spec_scoring_calls"], 510)
+        self.assertEqual(r["baseline_scoring_calls"], 480)
 
     def test_determinism(self):
         d1, t1 = build_pair()
