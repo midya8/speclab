@@ -29,6 +29,11 @@ jobs:
           python -m speclab.stochastic demo > /tmp/stochastic-demo.json
           cmp /tmp/stochastic-demo.json examples/stochastic-demo.json
           python examples/render_stochastic.py --check
+      - name: Check oracle policy demo and figure
+        run: |
+          python -m speclab.policy demo > /tmp/policy-demo.json
+          cmp /tmp/policy-demo.json examples/policy-demo.json
+          python examples/render_policy.py --check
   package:
     runs-on: ubuntu-latest
     steps:
@@ -54,4 +59,14 @@ jobs:
               (cd /tmp && PYTHONPATH=/tmp/installed python -m speclab.stochastic "$mode" "$GITHUB_WORKSPACE/examples/stochastic-input.json") > /tmp/wheel-$mode.json
             fi
             cmp /tmp/source-$mode.json /tmp/wheel-$mode.json
+          done
+          for mode in demo optimize; do
+            if [ "$mode" = demo ]; then
+              python -m speclab.policy "$mode" > /tmp/source-policy-$mode.json
+              (cd /tmp && PYTHONPATH=/tmp/installed python -m speclab.policy "$mode") > /tmp/wheel-policy-$mode.json
+            else
+              python -m speclab.policy "$mode" examples/policy-input.json > /tmp/source-policy-$mode.json
+              (cd /tmp && PYTHONPATH=/tmp/installed python -m speclab.policy "$mode" "$GITHUB_WORKSPACE/examples/policy-input.json") > /tmp/wheel-policy-$mode.json
+            fi
+            cmp /tmp/source-policy-$mode.json /tmp/wheel-policy-$mode.json
           done
