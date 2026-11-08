@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="1570" viewBox="0 0 1120 1570">
+<rect width="1120" height="1570" fill="#edf2f5"/><rect x="16" y="16" width="1088" height="1538" rx="18" fill="white"/>
+<style>text{font-family:Arial,sans-serif;fill:#24313b}.muted{fill:#5c6c78}</style>
+<text x="42" y="58" font-size="25" font-weight="700">SpecLab / exact sampling is more than matching greedy tokens</text>
+<text x="42" y="90" font-size="17" class="muted">Finite supplied autoregressive tables. Rational probability laws and explicit decoder-position counts.</text>
+<text x="42" y="137" font-size="22" font-weight="700">1 Rejection needs a residual, not a fresh target draw</text>
+<text x="42" y="170" font-size="18" >Accept x with min(1, p(x)/q(x)); on rejection draw from normalized max(0,p-q).</text>
+<text x="150" y="213" font-size="15" font-weight="700">Target p</text>
+<text x="300" y="213" font-size="15" font-weight="700">Draft q</text>
+<text x="455" y="213" font-size="15" font-weight="700">Accepted mass</text>
+<text x="635" y="213" font-size="15" font-weight="700">Residual law</text>
+<text x="800" y="213" font-size="15" font-weight="700">Correct output</text>
+<text x="970" y="213" font-size="15" font-weight="700">Wrong output</text>
+<text x="65" y="253" font-size="18" font-weight="700">A</text>
+<text x="165" y="253" font-size="18" id="cell-one-0-target" data-value="1/2">1/2</text>
+<text x="315" y="253" font-size="18" id="cell-one-0-draft" data-value="3/4">3/4</text>
+<text x="470" y="253" font-size="18" id="cell-one-0-accepted_mass" data-value="1/2">1/2</text>
+<text x="650" y="253" font-size="18" id="cell-one-0-residual_probability" data-value="0">0</text>
+<text x="815" y="253" font-size="18" id="cell-one-0-corrected_output_mass" data-value="1/2">1/2</text>
+<text x="985" y="253" font-size="18" id="cell-one-0-wrong_target_fallback_mass" data-value="5/8">5/8</text>
+<text x="65" y="291" font-size="18" font-weight="700">B</text>
+<text x="165" y="291" font-size="18" id="cell-one-1-target" data-value="1/2">1/2</text>
+<text x="315" y="291" font-size="18" id="cell-one-1-draft" data-value="1/4">1/4</text>
+<text x="470" y="291" font-size="18" id="cell-one-1-accepted_mass" data-value="1/4">1/4</text>
+<text x="650" y="291" font-size="18" id="cell-one-1-residual_probability" data-value="1">1</text>
+<text x="815" y="291" font-size="18" id="cell-one-1-corrected_output_mass" data-value="1/2">1/2</text>
+<text x="985" y="291" font-size="18" id="cell-one-1-wrong_target_fallback_mass" data-value="3/8">3/8</text>
+<text x="42" y="334" font-size="17" >Wrong fallback yields (5/8,3/8), not (1/2,1/2). Same target distribution is not same RNG trace.</text>
+<text x="42" y="381" font-size="22" font-weight="700">2 Enumerate the whole prefix-dependent four-token law</text>
+<text x="80" y="421" font-size="17" font-weight="700">Sequence</text>
+<text x="300" y="421" font-size="17" font-weight="700">Target only</text>
+<text x="535" y="421" font-size="17" font-weight="700">Corrected sampler</text>
+<text x="815" y="421" font-size="17" font-weight="700">Wrong target fallback</text>
+<rect x="55" y="434" width="1005" height="28" fill="#eef4f4"/>
+<text x="90" y="455" font-size="18" id="cell-seq-0" data-value="AAAA">AAAA</text>
+<text x="315" y="455" font-size="18" id="cell-prob-0-0" data-value="81/256">81/256</text>
+<text x="570" y="455" font-size="18" id="cell-prob-0-1" data-value="81/256">81/256</text>
+<text x="860" y="455" font-size="18" id="cell-prob-0-2" data-value="873/4096">873/4096</text>
+<text x="90" y="484" font-size="18" id="cell-seq-1" data-value="AAAB">AAAB</text>
+<text x="315" y="484" font-size="18" id="cell-prob-1-0" data-value="27/256">27/256</text>
+<text x="570" y="484" font-size="18" id="cell-prob-1-1" data-value="27/256">27/256</text>
+<text x="860" y="484" font-size="18" id="cell-prob-1-2" data-value="291/4096">291/4096</text>
+<rect x="55" y="492" width="1005" height="28" fill="#eef4f4"/>
+<text x="90" y="513" font-size="18" id="cell-seq-2" data-value="AABA">AABA</text>
+<text x="315" y="513" font-size="18" id="cell-prob-2-0" data-value="9/256">9/256</text>
+<text x="570" y="513" font-size="18" id="cell-prob-2-1" data-value="9/256">9/256</text>
+<text x="860" y="513" font-size="18" id="cell-prob-2-2" data-value="149/4096">149/4096</text>
+<text x="90" y="542" font-size="18" id="cell-seq-3" data-value="AABB">AABB</text>
+<text x="315" y="542" font-size="18" id="cell-prob-3-0" data-value="27/256">27/256</text>
+<text x="570" y="542" font-size="18" id="cell-prob-3-1" data-value="27/256">27/256</text>
+<text x="860" y="542" font-size="18" id="cell-prob-3-2" data-value="447/4096">447/4096</text>
+<rect x="55" y="550" width="1005" height="28" fill="#eef4f4"/>
+<text x="90" y="571" font-size="18" id="cell-seq-4" data-value="ABAA">ABAA</text>
+<text x="315" y="571" font-size="18" id="cell-prob-4-0" data-value="9/256">9/256</text>
+<text x="570" y="571" font-size="18" id="cell-prob-4-1" data-value="9/256">9/256</text>
+<text x="860" y="571" font-size="18" id="cell-prob-4-2" data-value="75/2048">75/2048</text>
+<text x="90" y="600" font-size="18" id="cell-seq-5" data-value="ABAB">ABAB</text>
+<text x="315" y="600" font-size="18" id="cell-prob-5-0" data-value="3/256">3/256</text>
+<text x="570" y="600" font-size="18" id="cell-prob-5-1" data-value="3/256">3/256</text>
+<text x="860" y="600" font-size="18" id="cell-prob-5-2" data-value="25/2048">25/2048</text>
+<rect x="55" y="608" width="1005" height="28" fill="#eef4f4"/>
+<text x="90" y="629" font-size="18" id="cell-seq-6" data-value="ABBA">ABBA</text>
+<text x="315" y="629" font-size="18" id="cell-prob-6-0" data-value="9/256">9/256</text>
+<text x="570" y="629" font-size="18" id="cell-prob-6-1" data-value="9/256">9/256</text>
+<text x="860" y="629" font-size="18" id="cell-prob-6-2" data-value="75/2048">75/2048</text>
+<text x="90" y="658" font-size="18" id="cell-seq-7" data-value="ABBB">ABBB</text>
+<text x="315" y="658" font-size="18" id="cell-prob-7-0" data-value="27/256">27/256</text>
+<text x="570" y="658" font-size="18" id="cell-prob-7-1" data-value="27/256">27/256</text>
+<text x="860" y="658" font-size="18" id="cell-prob-7-2" data-value="225/2048">225/2048</text>
+<rect x="55" y="666" width="1005" height="28" fill="#eef4f4"/>
+<text x="90" y="687" font-size="18" id="cell-seq-8" data-value="BAAA">BAAA</text>
+<text x="315" y="687" font-size="18" id="cell-prob-8-0" data-value="9/256">9/256</text>
+<text x="570" y="687" font-size="18" id="cell-prob-8-1" data-value="9/256">9/256</text>
+<text x="860" y="687" font-size="18" id="cell-prob-8-2" data-value="249/4096">249/4096</text>
+<text x="90" y="716" font-size="18" id="cell-seq-9" data-value="BAAB">BAAB</text>
+<text x="315" y="716" font-size="18" id="cell-prob-9-0" data-value="3/256">3/256</text>
+<text x="570" y="716" font-size="18" id="cell-prob-9-1" data-value="3/256">3/256</text>
+<text x="860" y="716" font-size="18" id="cell-prob-9-2" data-value="83/4096">83/4096</text>
+<rect x="55" y="724" width="1005" height="28" fill="#eef4f4"/>
+<text x="90" y="745" font-size="18" id="cell-seq-10" data-value="BABA">BABA</text>
+<text x="315" y="745" font-size="18" id="cell-prob-10-0" data-value="1/256">1/256</text>
+<text x="570" y="745" font-size="18" id="cell-prob-10-1" data-value="1/256">1/256</text>
+<text x="860" y="745" font-size="18" id="cell-prob-10-2" data-value="37/4096">37/4096</text>
+<text x="90" y="774" font-size="18" id="cell-seq-11" data-value="BABB">BABB</text>
+<text x="315" y="774" font-size="18" id="cell-prob-11-0" data-value="3/256">3/256</text>
+<text x="570" y="774" font-size="18" id="cell-prob-11-1" data-value="3/256">3/256</text>
+<text x="860" y="774" font-size="18" id="cell-prob-11-2" data-value="111/4096">111/4096</text>
+<rect x="55" y="782" width="1005" height="28" fill="#eef4f4"/>
+<text x="90" y="803" font-size="18" id="cell-seq-12" data-value="BBAA">BBAA</text>
+<text x="315" y="803" font-size="18" id="cell-prob-12-0" data-value="9/256">9/256</text>
+<text x="570" y="803" font-size="18" id="cell-prob-12-1" data-value="9/256">9/256</text>
+<text x="860" y="803" font-size="18" id="cell-prob-12-2" data-value="99/2048">99/2048</text>
+<text x="90" y="832" font-size="18" id="cell-seq-13" data-value="BBAB">BBAB</text>
+<text x="315" y="832" font-size="18" id="cell-prob-13-0" data-value="3/256">3/256</text>
+<text x="570" y="832" font-size="18" id="cell-prob-13-1" data-value="3/256">3/256</text>
+<text x="860" y="832" font-size="18" id="cell-prob-13-2" data-value="33/2048">33/2048</text>
+<rect x="55" y="840" width="1005" height="28" fill="#eef4f4"/>
+<text x="90" y="861" font-size="18" id="cell-seq-14" data-value="BBBA">BBBA</text>
+<text x="315" y="861" font-size="18" id="cell-prob-14-0" data-value="9/256">9/256</text>
+<text x="570" y="861" font-size="18" id="cell-prob-14-1" data-value="9/256">9/256</text>
+<text x="860" y="861" font-size="18" id="cell-prob-14-2" data-value="99/2048">99/2048</text>
+<text x="90" y="890" font-size="18" id="cell-seq-15" data-value="BBBB">BBBB</text>
+<text x="315" y="890" font-size="18" id="cell-prob-15-0" data-value="27/256">27/256</text>
+<text x="570" y="890" font-size="18" id="cell-prob-15-1" data-value="27/256">27/256</text>
+<text x="860" y="890" font-size="18" id="cell-prob-15-2" data-value="297/2048">297/2048</text>
+<text x="65" y="966" font-size="18" >Total variation from target:</text>
+<text x="570" y="966" font-size="18" id="cell-correct-tv" data-value="0">0</text>
+<text x="860" y="966" font-size="18" id="cell-wrong-tv" data-value="141/1024">141/1024</text>
+<text x="42" y="1015" font-size="22" font-weight="700">3 Fewer modeled rounds need not mean less scoring work</text>
+<text x="65" y="1056" font-size="17" font-weight="700">Four-token fixture</text>
+<text x="400" y="1056" font-size="17" font-weight="700">Rounds</text>
+<text x="620" y="1056" font-size="17" font-weight="700">Target positions</text>
+<text x="880" y="1056" font-size="17" font-weight="700">Draft calls</text>
+<text x="65" y="1093" font-size="17" >Identical draft</text>
+<text x="420" y="1093" font-size="18" id="cell-cost-0-verification_rounds" data-value="1">1</text>
+<text x="670" y="1093" font-size="18" id="cell-cost-0-target_positions" data-value="4">4</text>
+<text x="900" y="1093" font-size="18" id="cell-cost-0-draft_calls" data-value="3">3</text>
+<text x="65" y="1128" font-size="17" >Prefix-dependent draft</text>
+<text x="420" y="1128" font-size="18" id="cell-cost-1-verification_rounds" data-value="75/32">75/32</text>
+<text x="670" y="1128" font-size="18" id="cell-cost-1-target_positions" data-value="179/32">179/32</text>
+<text x="900" y="1128" font-size="18" id="cell-cost-1-draft_calls" data-value="13/4">13/4</text>
+<text x="65" y="1163" font-size="17" >Disjoint support</text>
+<text x="420" y="1163" font-size="18" id="cell-cost-2-verification_rounds" data-value="4">4</text>
+<text x="670" y="1163" font-size="18" id="cell-cost-2-target_positions" data-value="10">10</text>
+<text x="900" y="1163" font-size="18" id="cell-cost-2-draft_calls" data-value="6">6</text>
+<text x="42" y="1212" font-size="18" >Hypothetical costs only: each round costs 1; each draft score costs 1/10.</text>
+<text x="42" y="1243" font-size="17" class="muted">Separate score-work scenario charges each target position 1, not each batch 1.</text>
+<text x="65" y="1287" font-size="17" font-weight="700">Same fixture order</text>
+<text x="400" y="1287" font-size="17" font-weight="700">Parallel cost</text>
+<text x="620" y="1287" font-size="17" font-weight="700">Score-work cost</text>
+<text x="880" y="1287" font-size="17" font-weight="700">Modeled factor</text>
+<text x="65" y="1325" font-size="17" >Identical</text>
+<text x="420" y="1325" font-size="18" id="cell-model-0-modeled_parallel_cost" data-value="13/10">13/10</text>
+<text x="670" y="1325" font-size="18" id="cell-model-0-weighted_position_score_cost" data-value="43/10">43/10</text>
+<text x="900" y="1325" font-size="18" id="cell-model-0-modeled_parallel_factor" data-value="40/13">40/13</text>
+<text x="65" y="1360" font-size="17" >Prefix-dependent</text>
+<text x="420" y="1360" font-size="18" id="cell-model-1-modeled_parallel_cost" data-value="427/160">427/160</text>
+<text x="670" y="1360" font-size="18" id="cell-model-1-weighted_position_score_cost" data-value="947/160">947/160</text>
+<text x="900" y="1360" font-size="18" id="cell-model-1-modeled_parallel_factor" data-value="640/427">640/427</text>
+<text x="65" y="1395" font-size="17" >Disjoint</text>
+<text x="420" y="1395" font-size="18" id="cell-model-2-modeled_parallel_cost" data-value="23/5">23/5</text>
+<text x="670" y="1395" font-size="18" id="cell-model-2-weighted_position_score_cost" data-value="53/5">53/5</text>
+<text x="900" y="1395" font-size="18" id="cell-model-2-modeled_parallel_factor" data-value="20/23">20/23</text>
+<text x="42" y="1440" font-size="17" >Naive baseline: four rounds, four target positions, zero draft calls; either assigned cost is 4.</text>
+<text x="42" y="1474" font-size="16" >Full proposal paths, first-rejection/bonus branches, sequence x cost laws and sampled traces are retained.</text>
+<text x="42" y="1516" font-size="16" class="muted">No transformer throughput, GPU batching, KV cache, EOS, numerical-kernel or real-LLM quality claim.</text>
+<metadata id="report-zlib-base64">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</metadata></svg>
