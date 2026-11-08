@@ -7,6 +7,44 @@ SpecLab answers the two questions speculative-decoding write-ups usually skip:
 - **Is the output actually unchanged?** The greedy construction has an exact algorithm invariant: every emitted token is either a drafted token the target greedily confirms or the target's own greedy choice, so ideal greedy speculative decoding equals target-only greedy decoding. Separately from the invariant, the checked-in implementation is verified against it on four draft/target configurations, three generation lengths, and four block sizes (gamma 1, 2, 4, 8) - finite tests of this code, not a proof of it.
 - **What does it save?** Verification rounds, counted exactly: one modeled round per drafted block versus one round per token naive. On the checked-in fixture (order-3 draft, order-4 target, 8 prompts x 60 tokens, gamma=4): mean draft acceptance 0.800, and 122 rounds against 480 naive - a 74.6% modeled reduction. This is a verification-round count, not a measured reduction in model computation: this implementation scores drafted positions sequentially inside each round, and its actual scoring work on the fixture is 510 calls versus 480 naive.
 
+## v0.2: exact stochastic sampling, not only greedy equivalence
+
+![Exact stochastic laws and decoder counts](assets/stochastic-audit.svg)
+
+A separate finite autoregressive-table engine now implements sampled drafts,
+`min(1,p/q)` acceptance and normalized positive-residual correction. It retains
+complete proposal/first-rejection/bonus witnesses, exact full-sequence laws,
+joint sequence/count laws and a procedural integer-ticket sampler. The
+[stochastic model, proof, sources and bounds](STOCHASTIC.md) explain why same
+output law is not same-seed output, and why target fallback after rejection
+can be biased: the prefix-dependent control has TV `141/1024`, while the
+corrected law has TV `0` across every displayed sequence.
+
+The four-token mismatch averages `75/32` modeled verification rounds but
+`179/32` target positions and `13/4` draft calls. An explicit hypothetical
+parallel-cost scenario can improve while a position-score-work scenario gets
+worse. These are assigned costs, not measured GPU throughput or FLOPs.
+
+The full suite now has 34 tests. Independent references cover 225 one-step
+distribution pairs, 2,187 prefix-table pairs, 36 horizon/vocabulary/gamma
+configurations, and exact RNG-ticket enumeration of the procedural sampler
+for all 25 binary quarter-grid pairs at horizon 2. The SVG binds all 96 data
+cells and complete metadata. Installed ten-module wheel parity covers the
+original two command modes plus three new stochastic modes outside checkout.
+
+```bash
+python -m speclab.stochastic demo
+python -m speclab.stochastic audit examples/stochastic-input.json
+python -m speclab.stochastic sample examples/stochastic-input.json --seed 19
+python examples/render_stochastic.py --check
+```
+
+Finite supplied tables only: 1..3 tokens, horizon 1..4, gamma 1..3. No EOS,
+learned model, numerical kernel, hardware speed or real-LLM quality claim.
+The original greedy implementation and demo below remain unchanged.
+
+## Original greedy n-gram demo
+
 ## How it works
 
 - **Exact models, not approximations** - draft and target are character-level n-grams over one deterministic corpus; the target's greedy choice comes straight from counts, so agreement and verification are ground truth.
@@ -31,7 +69,7 @@ bash examples/demo.sh                        # offline demo, both gate sides
 
 ## Bounds worth stating
 
-Greedy decoding only - the speculative *sampling* rejection rule is future work. The equivalence claim is an algorithm invariant of the ideal greedy construction plus finite implementation tests on the listed configurations, not a proof of this code. Draft and target are n-gram toy models chosen so they share structure, as real draft/target pairs do; nothing here claims LLM-scale acceptance rates. The headline saving is a modeled verification-round count: real deployments save wall-clock because a batched verification pass costs little more than decoding one token (a memory-bandwidth argument this project does not benchmark), while this implementation's actual sequential scoring work (510 calls vs 480 naive on the fixture) is reported alongside the round count. The draft model's own evaluations are reported separately and are the real cost of speculation.
+This original n-gram evaluation is greedy decoding only. The separate v0.2 finite-table stochastic sampler is documented above and does not change these original numbers. The equivalence claim is an algorithm invariant of the ideal greedy construction plus finite implementation tests on the listed configurations, not a proof of this code. Draft and target are n-gram toy models chosen so they share structure, as real draft/target pairs do; nothing here claims LLM-scale acceptance rates. The headline saving is a modeled verification-round count: real deployments save wall-clock because a batched verification pass costs little more than decoding one token (a memory-bandwidth argument this project does not benchmark), while this implementation's actual sequential scoring work (510 calls vs 480 naive on the fixture) is reported alongside the round count. The draft model's own evaluations are reported separately and are the real cost of speculation.
 
 ## License
 
