@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "speclab"
-version = "0.2.0"
-description = "Greedy speculative verification and exact finite stochastic sampling audits"
+version = "0.3.0"
+description = "Exact speculative sampling laws and finite oracle lookahead policies"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
