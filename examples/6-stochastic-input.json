@@ -1,0 +1,151 @@
+{
+  "target": {
+    "vocabulary": [
+      "A",
+      "B"
+    ],
+    "horizon": 3,
+    "table": [
+      {
+        "prefix": [],
+        "probabilities": [
+          "1/2",
+          "1/2"
+        ]
+      },
+      {
+        "prefix": [
+          "A"
+        ],
+        "probabilities": [
+          "1/2",
+          "1/2"
+        ]
+      },
+      {
+        "prefix": [
+          "B"
+        ],
+        "probabilities": [
+          "1/2",
+          "1/2"
+        ]
+      },
+      {
+        "prefix": [
+          "A",
+          "A"
+        ],
+        "probabilities": [
+          "1/2",
+          "1/2"
+        ]
+      },
+      {
+        "prefix": [
+          "A",
+          "B"
+        ],
+        "probabilities": [
+          "1/2",
+          "1/2"
+        ]
+      },
+      {
+        "prefix": [
+          "B",
+          "A"
+        ],
+        "probabilities": [
+          "1/2",
+          "1/2"
+        ]
+      },
+      {
+        "prefix": [
+          "B",
+          "B"
+        ],
+        "probabilities": [
+          "1/2",
+          "1/2"
+        ]
+      }
+    ]
+  },
+  "draft": {
+    "vocabulary": [
+      "A",
+      "B"
+    ],
+    "horizon": 3,
+    "table": [
+      {
+        "prefix": [],
+        "probabilities": [
+          "3/4",
+          "1/4"
+        ]
+      },
+      {
+        "prefix": [
+          "A"
+        ],
+        "probabilities": [
+          "3/4",
+          "1/4"
+        ]
+      },
+      {
+        "prefix": [
+          "B"
+        ],
+        "probabilities": [
+          "3/4",
+          "1/4"
+        ]
+      },
+      {
+        "prefix": [
+          "A",
+          "A"
+        ],
+        "probabilities": [
+          "3/4",
+          "1/4"
+        ]
+      },
+      {
+        "prefix": [
+          "A",
+          "B"
+        ],
+        "probabilities": [
+          "3/4",
+          "1/4"
+        ]
+      },
+      {
+        "prefix": [
+          "B",
+          "A"
+        ],
+        "probabilities": [
+          "3/4",
+          "1/4"
+        ]
+      },
+      {
+        "prefix": [
+          "B",
+          "B"
+        ],
+        "probabilities": [
+          "3/4",
+          "1/4"
+        ]
+      }
+    ]
+  },
+  "gamma": 2
+}
