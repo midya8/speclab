@@ -24,3 +24,34 @@ jobs:
           --require-identical
           --min-acceptance 0.6
           --min-eval-savings 0.5
+      - name: Check stochastic demo and figure
+        run: |
+          python -m speclab.stochastic demo > /tmp/stochastic-demo.json
+          cmp /tmp/stochastic-demo.json examples/stochastic-demo.json
+          python examples/render_stochastic.py --check
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip wheel . --no-deps -w /tmp/wheels
+      - run: python -m pip install --target /tmp/installed /tmp/wheels/*.whl
+      - run: |
+          python -m speclab evaluate --format json > /tmp/source-evaluate.json
+          (cd /tmp && PYTHONPATH=/tmp/installed python -m speclab evaluate --format json) > /tmp/wheel-evaluate.json
+          cmp /tmp/source-evaluate.json /tmp/wheel-evaluate.json
+          python -m speclab gates --require-identical --min-acceptance 0.6 --min-eval-savings 0.5 > /tmp/source-gates.txt
+          (cd /tmp && PYTHONPATH=/tmp/installed python -m speclab gates --require-identical --min-acceptance 0.6 --min-eval-savings 0.5) > /tmp/wheel-gates.txt
+          cmp /tmp/source-gates.txt /tmp/wheel-gates.txt
+          for mode in demo audit sample; do
+            if [ "$mode" = demo ]; then
+              python -m speclab.stochastic "$mode" > /tmp/source-$mode.json
+              (cd /tmp && PYTHONPATH=/tmp/installed python -m speclab.stochastic "$mode") > /tmp/wheel-$mode.json
+            else
+              python -m speclab.stochastic "$mode" examples/stochastic-input.json > /tmp/source-$mode.json
+              (cd /tmp && PYTHONPATH=/tmp/installed python -m speclab.stochastic "$mode" "$GITHUB_WORKSPACE/examples/stochastic-input.json") > /tmp/wheel-$mode.json
+            fi
+            cmp /tmp/source-$mode.json /tmp/wheel-$mode.json
+          done
