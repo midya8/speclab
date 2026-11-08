@@ -158,7 +158,7 @@ keys and nonfinite JSON values fail. CLI errors exit 2 with empty stdout.
 
 ## Verification
 
-The full suite has 34 tests: all original 14 greedy tests, 17 stochastic tests,
+The v0.2 base suite has 34 tests: all original 14 greedy tests, 17 stochastic tests,
 and three figure tests. New independent references include:
 
 * all 225 pairs of ternary quarter-grid one-token distributions;
@@ -179,7 +179,7 @@ The figure checks all 96 data cells (80 numeric and 16 sequence labels), embeds
 the full compressed report, and detects a hidden draft-path-mass change even
 when all visible values stay fixed. CI checks Python 3.10-3.13, old gates, the
 saved complete new demo, byte-exact SVG regeneration and installed-wheel parity
-for all five command modes outside checkout.
+for its five command modes outside checkout. The additive [v0.3 oracle planner](LOOKAHEAD.md) expands the full suite to 47 tests, seven command modes and 12 modules.
 
 ## Sources and scope
 
