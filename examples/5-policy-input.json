@@ -1,0 +1,332 @@
+{
+  "draft": {
+    "horizon": 4,
+    "table": [
+      {
+        "prefix": [],
+        "probabilities": [
+          "1/2",
+          "1/2"
+        ]
+      },
+      {
+        "prefix": [
+          "A"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "B"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "A",
+          "A"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "A",
+          "B"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "B",
+          "A"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "B",
+          "B"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "A",
+          "A",
+          "A"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "A",
+          "A",
+          "B"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "A",
+          "B",
+          "A"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "A",
+          "B",
+          "B"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "B",
+          "A",
+          "A"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "B",
+          "A",
+          "B"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "B",
+          "B",
+          "A"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "B",
+          "B",
+          "B"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      }
+    ],
+    "vocabulary": [
+      "A",
+      "B"
+    ]
+  },
+  "max_gamma": 3,
+  "prices": {
+    "draft_calls": "1/10",
+    "target_positions": 0,
+    "verification_rounds": 1
+  },
+  "target": {
+    "horizon": 4,
+    "table": [
+      {
+        "prefix": [],
+        "probabilities": [
+          "1/2",
+          "1/2"
+        ]
+      },
+      {
+        "prefix": [
+          "A"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "B"
+        ],
+        "probabilities": [
+          "0",
+          "1"
+        ]
+      },
+      {
+        "prefix": [
+          "A",
+          "A"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "A",
+          "B"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "B",
+          "A"
+        ],
+        "probabilities": [
+          "0",
+          "1"
+        ]
+      },
+      {
+        "prefix": [
+          "B",
+          "B"
+        ],
+        "probabilities": [
+          "0",
+          "1"
+        ]
+      },
+      {
+        "prefix": [
+          "A",
+          "A",
+          "A"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "A",
+          "A",
+          "B"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "A",
+          "B",
+          "A"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "A",
+          "B",
+          "B"
+        ],
+        "probabilities": [
+          "1",
+          "0"
+        ]
+      },
+      {
+        "prefix": [
+          "B",
+          "A",
+          "A"
+        ],
+        "probabilities": [
+          "0",
+          "1"
+        ]
+      },
+      {
+        "prefix": [
+          "B",
+          "A",
+          "B"
+        ],
+        "probabilities": [
+          "0",
+          "1"
+        ]
+      },
+      {
+        "prefix": [
+          "B",
+          "B",
+          "A"
+        ],
+        "probabilities": [
+          "0",
+          "1"
+        ]
+      },
+      {
+        "prefix": [
+          "B",
+          "B",
+          "B"
+        ],
+        "probabilities": [
+          "0",
+          "1"
+        ]
+      }
+    ],
+    "vocabulary": [
+      "A",
+      "B"
+    ]
+  }
+}
