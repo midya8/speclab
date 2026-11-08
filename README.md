@@ -7,6 +7,38 @@ SpecLab answers the two questions speculative-decoding write-ups usually skip:
 - **Is the output actually unchanged?** The greedy construction has an exact algorithm invariant: every emitted token is either a drafted token the target greedily confirms or the target's own greedy choice, so ideal greedy speculative decoding equals target-only greedy decoding. Separately from the invariant, the checked-in implementation is verified against it on four draft/target configurations, three generation lengths, and four block sizes (gamma 1, 2, 4, 8) - finite tests of this code, not a proof of it.
 - **What does it save?** Verification rounds, counted exactly: one modeled round per drafted block versus one round per token naive. On the checked-in fixture (order-3 draft, order-4 target, 8 prompts x 60 tokens, gamma=4): mean draft acceptance 0.800, and 122 rounds against 480 naive - a 74.6% modeled reduction. This is a verification-round count, not a measured reduction in model computation: this implementation scores drafted positions sequentially inside each round, and its actual scoring work on the fixture is 510 calls versus 480 naive.
 
+## v0.3: choose lookahead, including no speculation
+
+![Exact prefix policy and full-strength baselines](assets/lookahead-policy.svg)
+
+An exact **oracle** planner now chooses draft length 0..3 from each emitted
+prefix. It retains every Bellman action value, transition and nonnegative slack,
+then independently evaluates the full selected-policy sequence/count law. All
+fixed lengths, including target-only action 0, are eligible baselines.
+
+On the four-token switching fixture, the optimal assigned cost is `23/10`
+versus best fixed `47/20`, a difference of `1/20` hypothetical units. Charge
+actual target **positions** instead of rounds and the optimizer chooses no
+speculation everywhere. The same target output law is preserved. Unreachable
+prefix decisions are shown but not charged as executed rounds.
+
+**47 tests** include exhaustive enumeration of all 12 tiny prefix policies for
+25 model pairs under three cost objectives, 72 full independent joint-law
+comparisons, 36 size/horizon/gamma-limit cases, and a 115-cell data-bound figure.
+CI verifies all seven modes from an installed 12-module wheel outside checkout.
+[Model, Bellman proof, full baseline table and prior adaptive-lookahead work](LOOKAHEAD.md).
+
+```bash
+python -m speclab.policy demo
+python -m speclab.policy optimize examples/policy-input.json
+python examples/render_policy.py --check
+```
+
+The planner knows every target/draft conditional. Planning, table evaluation
+and policy lookup overhead are not modeled. It chooses a length before drafting,
+not a confidence threshold while drafting; no measured latency, learned
+controller, real-model or novel adaptive-decoding algorithm claim.
+
 ## v0.2: exact stochastic sampling, not only greedy equivalence
 
 ![Exact stochastic laws and decoder counts](assets/stochastic-audit.svg)
@@ -25,11 +57,11 @@ The four-token mismatch averages `75/32` modeled verification rounds but
 parallel-cost scenario can improve while a position-score-work scenario gets
 worse. These are assigned costs, not measured GPU throughput or FLOPs.
 
-The full suite now has 34 tests. Independent references cover 225 one-step
+The v0.2 base suite contains 34 tests. Independent references cover 225 one-step
 distribution pairs, 2,187 prefix-table pairs, 36 horizon/vocabulary/gamma
 configurations, and exact RNG-ticket enumeration of the procedural sampler
 for all 25 binary quarter-grid pairs at horizon 2. The SVG binds all 96 data
-cells and complete metadata. Installed ten-module wheel parity covers the
+cells and complete metadata. The v0.2 installed ten-module wheel parity covers the
 original two command modes plus three new stochastic modes outside checkout.
 
 ```bash
