@@ -143,8 +143,8 @@ allowed integer actions. Arbitrary partial policies are not silently filled.
 
 ## Verification and packaging
 
-The complete suite now has 47 tests, including the original 34 and 13 additive
-policy/figure tests. Independent tests do not simply ask Bellman to confirm
+The v0.3 suite had 47 tests: the earlier 34 plus 13
+policy/figure tests. The later stopping audit adds tests without replacing these. Independent tests do not simply ask Bellman to confirm
 its own Bellman recursion:
 
 * At horizon 3, there are exactly 12 distinct binary prefix policies with

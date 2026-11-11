@@ -1,46 +1,45 @@
 # SpecLab
 
-## v0.4: stopping is not censoring
+Speculative decoding is easy to describe and easy to get subtly wrong. SpecLab uses small models whose full output laws can be checked, so correctness and work counts do not depend on a benchmark average.
 
-[Open the exact stopping lab](https://midya8.github.io/speclab/) · [Derivation and limits](STOPPING.md)
+The project has a greedy n-gram decoder, an exact stochastic sampler, an oracle lookahead planner and a lab for stopping a draft mid-proposal. All run offline in Python's standard library. There is no trained LLM, paid API or measured speedup claim.
 
-A draft may stop after a low-confidence sample, but keeping that token for verification is different from silently erasing it. On the hand-checkable `p=(1/2,1/2)`, `q=(3/4,1/4)` control, keep-and-verify preserves the full target law; the deliberately wrong censor-and-forget rule has **full-sequence TV 1/8**. This is not an allegation about any library.
+[Open the stopping lab](https://midya8.github.io/speclab/)
 
-The new `Fraction` stopped-tree engine exports every proposal leaf and verification branch, full sequence/count joint laws, all fixed-length baselines and honest draft/target operation counts. An independent full-path verifier uses forward state expansion. A separate editable BigInt browser implementation replays complete conditional tables, exposes every stopped leaf and downloads verifiable evidence. Twelve finite controls include prefix-dependent stopping, identical models, disjoint support, threshold boundaries and `2^-128` mass. No trained LLM, paid API or speedup claim. All earlier engines and figures remain intact.
+## Try it
 
-```sh
+```bash
+python -m speclab evaluate
+python -m speclab evaluate --format json
+python -m speclab gates --require-identical \
+  --min-acceptance 0.6 --min-eval-savings 0.5
+bash examples/demo.sh
+```
+
+For an exact stopping report that can be independently replayed:
+
+```bash
 python -m speclab.stopping_cli audit examples/stopping-input.json > /tmp/report.json
 python -m speclab.stopping_cli verify examples/stopping-input.json /tmp/report.json
 ```
 
+## Stop drafting without losing the sampled token
 
-Speculative decoding built from scratch in pure Python: a cheap draft model proposes a block of tokens, a target model verifies the block, and a greedy-construction invariant keeps the output identical to target-only decoding - with the invariant stated as an algorithm property and the implementation verified token-for-token on the tested configurations, and verification rounds counted exactly.
+A draft can stop after drawing a low-confidence token. Keeping that token for verification is different from erasing it and pretending it was never sampled.
 
-SpecLab answers the two questions speculative-decoding write-ups usually skip:
+Take `p=(1/2,1/2)` and `q=(3/4,1/4)` over two tokens. Keep-and-verify preserves the target's full output law. The deliberately wrong censor-and-forget control has full-sequence total variation `1/8`. This control is defined here, not attributed to a library.
 
-- **Is the output actually unchanged?** The greedy construction has an exact algorithm invariant: every emitted token is either a drafted token the target greedily confirms or the target's own greedy choice, so ideal greedy speculative decoding equals target-only greedy decoding. Separately from the invariant, the checked-in implementation is verified against it on four draft/target configurations, three generation lengths, and four block sizes (gamma 1, 2, 4, 8) - finite tests of this code, not a proof of it.
-- **What does it save?** Verification rounds, counted exactly: one modeled round per drafted block versus one round per token naive. On the checked-in fixture (order-3 draft, order-4 target, 8 prompts x 60 tokens, gamma=4): mean draft acceptance 0.800, and 122 rounds against 480 naive - a 74.6% modeled reduction. This is a verification-round count, not a measured reduction in model computation: this implementation scores drafted positions sequentially inside each round, and its actual scoring work on the fixture is 510 calls versus 480 naive.
+The Python `Fraction` engine records every stopped proposal leaf, verification branch, final sequence/count joint law and operation count. A separate verifier enumerates full draft paths and expands decoding states forward. The editable browser lab uses a third BigInt implementation, not precomputed reports. Downloaded evidence can be replayed in Python.
 
-## v0.3: choose lookahead, including no speculation
+Twelve controls cover prefix-dependent stopping, identical models, disjoint support, threshold boundaries and mass `2^-128`. Fixed-length and target-only baselines stay in the report even when they beat the chosen stopping rule. [Rules, proof, counters and limits](STOPPING.md).
+
+## Choose a draft length, including zero
 
 ![Exact prefix policy and full-strength baselines](assets/lookahead-policy.svg)
 
-An exact **oracle** planner now chooses draft length 0..3 from each emitted
-prefix. It retains every Bellman action value, transition and nonnegative slack,
-then independently evaluates the full selected-policy sequence/count law. All
-fixed lengths, including target-only action 0, are eligible baselines.
+The oracle planner chooses length 0..3 before each round from the emitted prefix. It knows every target and draft conditional. Every Bellman action value, transition and slack is kept, then the selected policy's full sequence/count law is evaluated separately.
 
-On the four-token switching fixture, the optimal assigned cost is `23/10`
-versus best fixed `47/20`, a difference of `1/20` hypothetical units. Charge
-actual target **positions** instead of rounds and the optimizer chooses no
-speculation everywhere. The same target output law is preserved. Unreachable
-prefix decisions are shown but not charged as executed rounds.
-
-**47 tests** include exhaustive enumeration of all 12 tiny prefix policies for
-25 model pairs under three cost objectives, 72 full independent joint-law
-comparisons, 36 size/horizon/gamma-limit cases, and a 115-cell data-bound figure.
-CI verifies all seven modes from an installed 12-module wheel outside checkout.
-[Model, Bellman proof, full baseline table and prior adaptive-lookahead work](LOOKAHEAD.md).
+On the four-token switching fixture, its assigned cost is `23/10`, versus best fixed `47/20`: a difference of `1/20` hypothetical units. Charge target positions instead of rounds and it chooses no speculation everywhere. Both choices preserve the target output law. Unreachable decisions are shown but not charged as executed work.
 
 ```bash
 python -m speclab.policy demo
@@ -48,35 +47,17 @@ python -m speclab.policy optimize examples/policy-input.json
 python examples/render_policy.py --check
 ```
 
-The planner knows every target/draft conditional. Planning, table evaluation
-and policy lookup overhead are not modeled. It chooses a length before drafting,
-not a confidence threshold while drafting; no measured latency, learned
-controller, real-model or novel adaptive-decoding algorithm claim.
+This is a full-known-table planner, not a learned controller or a new adaptive-decoding algorithm. Planning, table evaluation and policy lookup overhead are not priced. The proof covers this finite action set and assigned objective, not practical latency. [Bellman proof, baselines and prior work](LOOKAHEAD.md).
 
-## v0.2: exact stochastic sampling, not only greedy equivalence
+## Sample from the target law
 
 ![Exact stochastic laws and decoder counts](assets/stochastic-audit.svg)
 
-A separate finite autoregressive-table engine now implements sampled drafts,
-`min(1,p/q)` acceptance and normalized positive-residual correction. It retains
-complete proposal/first-rejection/bonus witnesses, exact full-sequence laws,
-joint sequence/count laws and a procedural integer-ticket sampler. The
-[stochastic model, proof, sources and bounds](STOCHASTIC.md) explain why same
-output law is not same-seed output, and why target fallback after rejection
-can be biased: the prefix-dependent control has TV `141/1024`, while the
-corrected law has TV `0` across every displayed sequence.
+The stochastic engine samples from a finite autoregressive draft table, accepts with `min(1,p/q)` and uses normalized positive-residual correction after rejection. It keeps every proposal, first rejection and bonus witness, plus the complete output law and joint sequence/count law. A procedural integer-ticket sampler runs separately from the law enumerator.
 
-The four-token mismatch averages `75/32` modeled verification rounds but
-`179/32` target positions and `13/4` draft calls. An explicit hypothetical
-parallel-cost scenario can improve while a position-score-work scenario gets
-worse. These are assigned costs, not measured GPU throughput or FLOPs.
+Same output law does not mean same output under the same seed. Nor can target fallback simply replace residual correction: on the prefix-dependent control, that wrong fallback has TV `141/1024`; the corrected law has TV `0` for every displayed sequence.
 
-The v0.2 base suite contains 34 tests. Independent references cover 225 one-step
-distribution pairs, 2,187 prefix-table pairs, 36 horizon/vocabulary/gamma
-configurations, and exact RNG-ticket enumeration of the procedural sampler
-for all 25 binary quarter-grid pairs at horizon 2. The SVG binds all 96 data
-cells and complete metadata. The v0.2 installed ten-module wheel parity covers the
-original two command modes plus three new stochastic modes outside checkout.
+The four-token mismatch averages `75/32` modeled verification rounds, `179/32` target positions and `13/4` draft calls. An assigned parallel-cost scenario improves while a position-score-work scenario gets worse. Neither measures GPU throughput or FLOPs.
 
 ```bash
 python -m speclab.stochastic demo
@@ -85,37 +66,35 @@ python -m speclab.stochastic sample examples/stochastic-input.json --seed 19
 python examples/render_stochastic.py --check
 ```
 
-Finite supplied tables only: 1..3 tokens, horizon 1..4, gamma 1..3. No EOS,
-learned model, numerical kernel, hardware speed or real-LLM quality claim.
-The original greedy implementation and demo below remain unchanged.
+[Correction proof, schema, count contract and sources](STOCHASTIC.md).
 
-## Original greedy n-gram demo
+## The original greedy n-gram experiment
 
-## How it works
+The draft proposes a block of characters. The target confirms matching greedy choices, or replaces the first mismatch with its own choice. Every emitted token is therefore a target greedy choice. That is the ideal algorithm's invariant; finite tests check this implementation rather than proving its code.
 
-- **Exact models, not approximations** - draft and target are character-level n-grams over one deterministic corpus; the target's greedy choice comes straight from counts, so agreement and verification are ground truth.
-- **Verification rounds, honestly labeled** - `verify_block` counts each drafted block as one modeled verification round (the batched pass a real deployment runs) while also counting the actual sequential scoring calls inside it; both numbers are reported, and both counting contracts are asserted in tests.
-- **Measured acceptance, including the failure mode** - a mismatched pair (order-2 draft vs order-3 target) drops acceptance to 0.03 and nearly all savings disappear; that configuration is pinned in the suite so acceptance is demonstrably measured, not assumed.
-- **Deterministic everything** - seeded corpus, count-based models, pinned fixture numbers in tests.
+The tests compare four draft/target configurations, three generation lengths and block sizes 1, 2, 4 and 8. Models use counts from one deterministic corpus, with vocabulary-order tie breaking.
 
-## Usage
+For the checked-in order-3 draft/order-4 target fixture, eight prompts of 60 tokens at gamma 4 give mean draft acceptance `0.800`. There are 122 modeled verification rounds versus 480 target-only rounds, a 74.6% reduction in that counter. Actual sequential target scoring takes **510 calls versus 480**, so it is not a measured compute saving. Draft calls are counted separately. An order-2/order-3 mismatch drops acceptance to about `0.03`; that failure stays in the tests.
+
+A modeled round represents a batched target verification pass. This implementation performs the position scores sequentially and does not benchmark the hardware assumptions needed to turn fewer rounds into lower wall time.
+
+## Checks
 
 ```bash
-python3 -m speclab evaluate                  # per-prompt table
-python3 -m speclab evaluate --format json    # machine-readable
-python3 -m speclab gates --require-identical \
-  --min-acceptance 0.6 --min-eval-savings 0.5
-bash examples/demo.sh                        # offline demo, both gate sides
+python -m unittest discover -s tests -v
+python examples/check_stopping.py
+node --test tests/test_stopping.cjs tests/test_stopping_browser.cjs
 ```
 
-## Verification
+The current suite has 61 Python tests and four Node/actual-Chrome tests. Python CI runs on 3.10-3.13. The installed-wheel job checks all earlier command modes plus stopping audit, verify and demo outside the checkout.
 
-- 14 unit tests cover implementation equivalence with the greedy invariant across configurations and gammas, both counting contracts (one modeled round per block, actual scoring calls tracked separately, naive one round per token), acceptance bounds and consistency, pinned fixture numbers including actual scoring work, determinism, both sides of every CLI gate, and the low-acceptance negative control.
-- CI runs the same suite across Python 3.10-3.13.
+The method notes keep the detailed checks and historical suite counts: 14 original greedy tests, 34 after stochastic sampling and 47 after lookahead planning. They include 225 one-step distribution pairs, 2,187 prefix-table pairs, exact RNG-ticket enumeration, all 12 tiny prefix policies for 25 model pairs under three objectives, and independent full-law comparisons. The figures bind 96 stochastic and 115 policy data cells. Browser tests inspect all 12 stopping reports and their leaves/branches, trusted edit invalidation, actual downloads and 320/390/1280 layouts.
 
-## Bounds worth stating
+## Limits
 
-This original n-gram evaluation is greedy decoding only. The separate v0.2 finite-table stochastic sampler is documented above and does not change these original numbers. The equivalence claim is an algorithm invariant of the ideal greedy construction plus finite implementation tests on the listed configurations, not a proof of this code. Draft and target are n-gram toy models chosen so they share structure, as real draft/target pairs do; nothing here claims LLM-scale acceptance rates. The headline saving is a modeled verification-round count: real deployments save wall-clock because a batched verification pass costs little more than decoding one token (a memory-bandwidth argument this project does not benchmark), while this implementation's actual sequential scoring work (510 calls vs 480 naive on the fixture) is reported alongside the round count. The draft model's own evaluations are reported separately and are the real cost of speculation.
+Exact table experiments use 1..3 tokens, horizon 1..4 and maximum draft length 1..3. They require complete supplied conditionals, including unreachable prefixes. There is no EOS, tokenizer mismatch, real-model training, KV cache or GPU kernel. The original n-gram demo is greedy only; it is separate from the exact stochastic engines.
+
+Work counters describe modeled decoding paths, not the cost of enumerating those paths or running a verifier. Assigned costs are not calibrated runtime costs. The small examples establish neither LLM-scale acceptance rates nor a quality, latency or deployment benefit. Standard speculative sampling and adaptive lookahead work are credited in the method notes.
 
 ## License
 
