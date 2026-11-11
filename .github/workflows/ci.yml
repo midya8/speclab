@@ -34,6 +34,25 @@ jobs:
           python -m speclab.policy demo > /tmp/policy-demo.json
           cmp /tmp/policy-demo.json examples/policy-demo.json
           python examples/render_policy.py --check
+      - name: Check within-proposal stopping controls and independent replay
+        run: |
+          python -m speclab.stopping_cli demo > /tmp/stopping-fixtures.json
+          python examples/check_stopping.py
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: browser-actions/setup-chrome@v1
+        id: chrome
+      - run: node --test tests/test_stopping.cjs tests/test_stopping_browser.cjs
+        env:
+          CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
   package:
     runs-on: ubuntu-latest
     steps:
@@ -70,3 +89,12 @@ jobs:
             fi
             cmp /tmp/source-policy-$mode.json /tmp/wheel-policy-$mode.json
           done
+      - name: Compare installed stopping CLI and independent verifier
+        run: |
+          python -m speclab.stopping_cli audit examples/stopping-input.json > /tmp/source-stopping.json
+          (cd /tmp && PYTHONPATH=/tmp/installed python -m speclab.stopping_cli audit "$GITHUB_WORKSPACE/examples/stopping-input.json") > /tmp/wheel-stopping.json
+          cmp /tmp/source-stopping.json /tmp/wheel-stopping.json
+          (cd /tmp && PYTHONPATH=/tmp/installed python -m speclab.stopping_cli verify "$GITHUB_WORKSPACE/examples/stopping-input.json" /tmp/wheel-stopping.json)
+          python -m speclab.stopping_cli demo > /tmp/source-stopping-demo.json
+          (cd /tmp && PYTHONPATH=/tmp/installed python -m speclab.stopping_cli demo) > /tmp/wheel-stopping-demo.json
+          cmp /tmp/source-stopping-demo.json /tmp/wheel-stopping-demo.json
