@@ -179,7 +179,7 @@ The figure checks all 96 data cells (80 numeric and 16 sequence labels), embeds
 the full compressed report, and detects a hidden draft-path-mass change even
 when all visible values stay fixed. CI checks Python 3.10-3.13, old gates, the
 saved complete new demo, byte-exact SVG regeneration and installed-wheel parity
-for its five command modes outside checkout. The additive [v0.3 oracle planner](LOOKAHEAD.md) expands the full suite to 47 tests, seven command modes and 12 modules.
+for its five command modes outside checkout. The later [v0.3 oracle planner](LOOKAHEAD.md) brought that suite to 47 tests, seven command modes and 12 modules. The [stopping audit](STOPPING.md) adds further checks; see the README for current totals.
 
 ## Sources and scope
 
