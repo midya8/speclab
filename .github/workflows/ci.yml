@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, exact-stopping-evidence]
+    branches: [main, exact-stopping-evidence, plain-language-review]
   pull_request:
 
 jobs:
