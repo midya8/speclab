@@ -1,5 +1,19 @@
 # SpecLab
 
+## v0.4: stopping is not censoring
+
+[Open the exact stopping lab](https://midya8.github.io/speclab/) · [Derivation and limits](STOPPING.md)
+
+A draft may stop after a low-confidence sample, but keeping that token for verification is different from silently erasing it. On the hand-checkable `p=(1/2,1/2)`, `q=(3/4,1/4)` control, keep-and-verify preserves the full target law; the deliberately wrong censor-and-forget rule has **full-sequence TV 1/8**. This is not an allegation about any library.
+
+The new `Fraction` stopped-tree engine exports every proposal leaf and verification branch, full sequence/count joint laws, all fixed-length baselines and honest draft/target operation counts. An independent full-path verifier uses forward state expansion. A separate editable BigInt browser implementation replays complete conditional tables, exposes every stopped leaf and downloads verifiable evidence. Twelve finite controls include prefix-dependent stopping, identical models, disjoint support, threshold boundaries and `2^-128` mass. No trained LLM, paid API or speedup claim. All earlier engines and figures remain intact.
+
+```sh
+python -m speclab.stopping_cli audit examples/stopping-input.json > /tmp/report.json
+python -m speclab.stopping_cli verify examples/stopping-input.json /tmp/report.json
+```
+
+
 Speculative decoding built from scratch in pure Python: a cheap draft model proposes a block of tokens, a target model verifies the block, and a greedy-construction invariant keeps the output identical to target-only decoding - with the invariant stated as an algorithm property and the implementation verified token-for-token on the tested configurations, and verification rounds counted exactly.
 
 SpecLab answers the two questions speculative-decoding write-ups usually skip:
