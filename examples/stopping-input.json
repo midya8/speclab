@@ -1,0 +1,72 @@
+{
+  "draft": {
+    "horizon": 2,
+    "table": [
+      {
+        "prefix": [],
+        "probabilities": [
+          "3/4",
+          "1/4"
+        ]
+      },
+      {
+        "prefix": [
+          "A"
+        ],
+        "probabilities": [
+          "3/4",
+          "1/4"
+        ]
+      },
+      {
+        "prefix": [
+          "B"
+        ],
+        "probabilities": [
+          "3/4",
+          "1/4"
+        ]
+      }
+    ],
+    "vocabulary": [
+      "A",
+      "B"
+    ]
+  },
+  "max_gamma": 1,
+  "target": {
+    "horizon": 2,
+    "table": [
+      {
+        "prefix": [],
+        "probabilities": [
+          "1/2",
+          "1/2"
+        ]
+      },
+      {
+        "prefix": [
+          "A"
+        ],
+        "probabilities": [
+          "1/2",
+          "1/2"
+        ]
+      },
+      {
+        "prefix": [
+          "B"
+        ],
+        "probabilities": [
+          "1/2",
+          "1/2"
+        ]
+      }
+    ],
+    "vocabulary": [
+      "A",
+      "B"
+    ]
+  },
+  "threshold": "1/2"
+}
