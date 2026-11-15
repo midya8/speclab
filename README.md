@@ -76,6 +76,14 @@ The tests compare four draft/target configurations, three generation lengths and
 
 For the checked-in order-3 draft/order-4 target fixture, eight prompts of 60 tokens at gamma 4 give mean draft acceptance `0.800`. There are 122 modeled verification rounds versus 480 target-only rounds, a 74.6% reduction in that counter. Actual sequential target scoring takes **510 calls versus 480**, so it is not a measured compute saving. Draft calls are counted separately. An order-2/order-3 mismatch drops acceptance to about `0.03`; that failure stays in the tests.
 
+The legacy JSON fields `target_evals` and `target_eval_savings`, and the
+`--min-eval-savings` flag, retain their names and numerical behavior for
+compatibility. They count modeled rounds, not actual scoring calls. Terminal,
+Markdown, gate failures and help name that distinction directly. The demo no
+longer ends with a hard-coded claim of fewer target evaluations. Four reporting
+tests check the real 122/480-round versus 510/480-call control, dynamic counts,
+unchanged JSON/flag behavior and help wording. All 61 earlier tests remain.
+
 A modeled round represents a batched target verification pass. This implementation performs the position scores sequentially and does not benchmark the hardware assumptions needed to turn fewer rounds into lower wall time.
 
 ## Checks
@@ -86,7 +94,7 @@ python examples/check_stopping.py
 node --test tests/test_stopping.cjs tests/test_stopping_browser.cjs
 ```
 
-The current suite has 61 Python tests and four Node/actual-Chrome tests. Python CI runs on 3.10-3.13. The installed-wheel job checks all earlier command modes plus stopping audit, verify and demo outside the checkout.
+The current suite has 65 Python tests and four Node/actual-Chrome tests. Python CI runs on 3.10-3.13. The installed-wheel job checks all earlier command modes plus stopping audit, verify and demo outside the checkout.
 
 The method notes keep the detailed checks and historical suite counts: 14 original greedy tests, 34 after stochastic sampling and 47 after lookahead planning. They include 225 one-step distribution pairs, 2,187 prefix-table pairs, exact RNG-ticket enumeration, all 12 tiny prefix policies for 25 model pairs under three objectives, and independent full-law comparisons. The figures bind 96 stochastic and 115 policy data cells. Browser tests inspect all 12 stopping reports and their leaves/branches, trusted edit invalidation, actual downloads and 320/390/1280 layouts.
 
