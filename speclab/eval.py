@@ -1,10 +1,7 @@
-"""Measured speculative-decoding evaluation.
+"""Finite greedy-decoding comparisons with distinct work counters.
 
-The fixture pairs a cheaper order-3 draft with an order-4 target over the same
-deterministic corpus, generates from fixed prompts, and reports what real
-deployments care about: output equivalence (proven, not sampled), draft
-acceptance rate, and target-evaluation savings versus one-evaluation-per-token
-baseline decoding.
+Legacy JSON keys named target_evals count modeled verification rounds, not
+sequential target scoring calls. Neither counter is a hardware measurement.
 """
 
 from __future__ import annotations
@@ -77,7 +74,7 @@ def format_terminal(results: Dict) -> str:
         f"SpecLab evaluation - {len(results['prompts'])} prompts x "
         f"{results['n_tokens']} tokens, gamma={results['gamma']}",
         "",
-        f"{'prompt':<16} {'identical':>9} {'acceptance':>10} {'target evals':>22}",
+        f"{'prompt':<16} {'identical':>9} {'acceptance':>10} {'modeled rounds':>22}",
         f"{'-'*16} {'-'*9} {'-'*10} {'-'*22}",
     ]
     for r in results["prompts"]:
@@ -88,13 +85,14 @@ def format_terminal(results: Dict) -> str:
         "",
         f"Output identical to target-only greedy on every prompt: {results['identical']}",
         f"Mean draft acceptance: {results['mean_acceptance']:.3f}",
-        f"Target evaluations: {results['spec_target_evals']} vs "
+        f"Modeled verification rounds: {results['spec_target_evals']} vs "
         f"{results['baseline_target_evals']} naive "
-        f"(savings {results['target_eval_savings']*100:.1f}%)",
-        f"Draft evaluations (cheap model): {results['total_draft_evals']}",
+        f"(round reduction {results['target_eval_savings']*100:.1f}%)",
+        f"Draft scoring calls: {results['total_draft_evals']}",
         "",
-        "Note: target evals are modeled verification rounds (one per drafted block);",
-        f"actual sequential scoring work: {results['spec_scoring_calls']} calls vs "
-        f"{results['baseline_scoring_calls']} naive.",
+        "Legacy target_evals JSON fields count modeled verification rounds;",
+        f"actual sequential target scoring work: {results['spec_scoring_calls']} calls vs "
+        f"{results['baseline_scoring_calls']} target-only.",
+        "Round reduction is not a measured compute or latency saving.",
     ]
     return "\n".join(lines)

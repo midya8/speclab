@@ -19,7 +19,7 @@ from .eval import build_pair, format_terminal, run_evaluation
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
         prog="speclab",
-        description="Speculative decoding with proven equivalence and measured savings.")
+        description="Check finite greedy equivalence, modeled rounds and actual scoring calls.")
     sub = parser.add_subparsers(dest="command", required=True)
 
     def common(p):
@@ -42,7 +42,7 @@ def main(argv=None) -> int:
     p_gate.add_argument("--min-acceptance", type=float, default=None,
                         help="minimum mean draft acceptance rate")
     p_gate.add_argument("--min-eval-savings", type=float, default=None,
-                        help="minimum fraction of target evaluations saved")
+                        help="minimum modeled verification-round reduction (legacy flag name)")
 
     args = parser.parse_args(argv)
     draft, target = build_pair(args.corpus_size, args.corpus_seed,
@@ -53,13 +53,16 @@ def main(argv=None) -> int:
         if args.format == "json":
             print(json.dumps(results, indent=2, sort_keys=True))
         elif args.format == "markdown":
-            print("| prompt | identical | acceptance | target evals | naive |")
+            print("| prompt | identical | acceptance | modeled verification rounds | target-only rounds |")
             print("|---|---|---|---|---|")
             for r in results["prompts"]:
                 print(f"| {r['prompt']} | {r['identical']} | {r['acceptance']:.2f} "
                       f"| {r['spec_target_evals']} | {r['baseline_target_evals']} |")
-            print(f"\nSavings: {results['target_eval_savings']*100:.1f}% "
-                  f"of target evaluations; mean acceptance {results['mean_acceptance']:.3f}.")
+            print(f"\nModeled verification-round reduction: {results['target_eval_savings']*100:.1f}% "
+                  f"relative to target-only; mean acceptance {results['mean_acceptance']:.3f}.")
+            print(f"\nActual sequential target scoring calls: {results['spec_scoring_calls']} "
+                  f"vs {results['baseline_scoring_calls']} target-only.")
+            print("Round reduction is not a measured compute or latency saving.")
         else:
             print(format_terminal(results))
         return 0
@@ -71,7 +74,7 @@ def main(argv=None) -> int:
         failures.append(f"mean acceptance {results['mean_acceptance']:.3f} "
                         f"< required {args.min_acceptance:.3f}")
     if args.min_eval_savings is not None and results["target_eval_savings"] < args.min_eval_savings:
-        failures.append(f"target-eval savings {results['target_eval_savings']:.3f} "
+        failures.append(f"modeled verification-round reduction {results['target_eval_savings']:.3f} "
                         f"< required {args.min_eval_savings:.3f}")
 
     print(format_terminal(results))

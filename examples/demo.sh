@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SpecLab demo: proven equivalence and measured savings, both gate sides. Offline.
+# SpecLab demo: finite equivalence and modeled round gates, both sides. Offline.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -20,4 +20,4 @@ else
 fi
 
 echo
-echo "Demo complete: identical output with 74.6% fewer target evaluations."
+echo "Demo complete: fixture outputs match; modeled rounds and sequential scoring calls are reported separately."
