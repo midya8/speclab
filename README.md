@@ -1,6 +1,6 @@
 # Speculative decoding
 
-Speculative decoding is easy to describe and easy to get subtly wrong. SpecLab uses small models whose full output laws can be checked, so correctness and work counts do not depend on a benchmark average.
+Speculative decoding is easy to describe and easy to get subtly wrong. This implementation uses small models whose full output laws can be checked, so correctness and work counts do not depend on a benchmark average.
 
 The project has a greedy n-gram decoder, an exact stochastic sampler, an oracle lookahead planner and a lab for stopping a draft mid-proposal. All run offline in Python's standard library. There is no trained LLM, paid API or measured speedup claim.
 
